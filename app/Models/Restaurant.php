@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Restaurant extends Model
+{
+  protected $table = 'lgt_restaurante';
+  protected $primaryKey = 'id_lgt_restaurante';
+  public $timestamps = false;
+  protected $fillable = [
+    'lgt_nombre_restaurante',
+    'lgt_direccion',
+    'lgt_ruc_razon_restaurante',
+    'lgt_horario_apertura',
+    'lgt_horario_cierre'
+  ];
+}
