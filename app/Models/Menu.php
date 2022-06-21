@@ -10,7 +10,7 @@ class Menu extends Model
   protected $primaryKey = 'id_vta_carta';
   public $timestamps = false;
   protected $fillable = [
-    'id_vta_lgt_restaurante',
+    'lgt_restaurante_id_lgt_restaurante',
     'vta_descripcion_carta'
   ];
 }

@@ -42,6 +42,7 @@ Route::get('/ingrediente/getIngredientes', 'App\http\Controllers\IngredientContr
 // Menu
 Route::post('/carta/createCarta', 'App\http\Controllers\MenuController@createMenu');
 Route::get('/carta/getCartas', 'App\http\Controllers\MenuController@getMenus');
+Route::post('/carta/deleteCarta', 'App\http\Controllers\MenuController@deleteMenu');
 Route::post('/carta/getCartasPorRestaurante', 'App\http\Controllers\MenuController@getMenusByRestaurant');
 
 
