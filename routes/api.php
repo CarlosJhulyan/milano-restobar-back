@@ -14,9 +14,10 @@ Route::post('/admin/login', 'App\http\Controllers\AuthController@loginAdmin');
 
 // User
 Route::post('/usuario/createUsuario', 'App\http\Controllers\UserController@createUser');
+Route::put('/usuario/updateUsuario', 'App\http\Controllers\UserController@updateUser');
 Route::get('/usuario/getUsuarios', 'App\http\Controllers\UserController@getUsers');
 Route::patch('/usuario/updateRolUsuario', 'App\http\Controllers\UserController@updateRolUser');
-
+Route::delete('/usuario/deleteUsuario/{idusuario}', 'App\http\Controllers\UserController@deleteUser');
 // Plate
 Route::post('/plato/createPlato', 'App\http\Controllers\PlateController@createPlate');
 Route::get('/plato/getPlatos', 'App\http\Controllers\PlateController@getPlates');
