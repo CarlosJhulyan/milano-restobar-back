@@ -15,6 +15,7 @@ class OrderHeader extends Model
     'monto_total',
     'id_usuario',
     'id_cliente',
-    'vta_mesa_id_vta_mesa'
+    'vta_mesa_id_vta_mesa',
+    'num_vta_pedido'
   ];
 }

@@ -41,12 +41,18 @@ class OrderController extends Controller
       if ($orderHeader) {
         $idHeader = $orderHeader->idvta_pedido_venta_cab;
 
+        DB::table('vta_pedido_venta_cab')
+          ->where('idvta_pedido_venta_cab', '=', $idHeader)
+          ->update(
+            ['num_vta_pedido' => str_pad($idHeader, 9, '0', STR_PAD_LEFT)]
+          );
+
         foreach ($details as $value) {
           OrderDetail::create([
             'idvta_pedido_venta_cab' => $idHeader,
             'cantidad' => $value['cantidad'],
             'id_cme_receta' => $value['id_cme_receta'],
-            'id_vta_plato' => $value['id_vta_plato'],
+            'vta_plato_id_vta_plato' => $value['id_vta_plato'],
             'precio' => $value['precio']
           ]);
         }
@@ -124,6 +130,106 @@ class OrderController extends Controller
         ->get();
 
       return CustomResponse::success('Lista detalles de pedido', $data);
+    } catch (\Throwable $th) {
+      error_log($th);
+      return CustomResponse::failure();
+    }
+  }
+
+  function getOrderDetailsComplete(Request $request) {
+    $codOrderHeader = $request->input('codPedidoCabecera');
+
+    $validator = Validator::make($request->all(), [
+      'codPedidoCabecera' => 'required',
+    ]);
+
+    if ($validator->fails()) {
+      return CustomResponse::failure('Datos faltantes');
+    }
+
+    try {
+      $orderDetails = OrderDetail::select('vta_pedido_vta_det.*', 'vta_plato.vta_ruta_imagen_plato', 'vta_plato.vta_precio', 'vta_plato.vta_desc_plato')
+        ->where('idvta_pedido_venta_cab', '=', $codOrderHeader)
+        ->join('vta_plato', 'id_vta_plato', '=', 'vta_plato_id_vta_plato')
+        ->get();
+      $orderHeader = OrderHeader::select('vta_pedido_venta_cab.*', 'cme_usuario.nombre', 'cme_usuario.apellido_paterno', 'vta_mesa.vta_numero_mesa')
+        ->where('idvta_pedido_venta_cab', '=', $codOrderHeader)
+        ->join('cme_usuario', 'id_cme_usuario', '=', 'id_usuario')
+        ->join('vta_mesa', 'id_vta_mesa', '=', 'vta_mesa_id_vta_mesa')
+        ->first();
+
+      $data = [
+        'cabecera' => $orderHeader,
+        'detalles' => $orderDetails
+      ];
+
+      return CustomResponse::success('Detalles de pedido', $data);
+    } catch (\Throwable $th) {
+      error_log($th);
+      return CustomResponse::failure();
+    }
+  }
+
+  function getOrdersFulfilled(Request $request) {
+    try {
+      $data = OrderHeader::select(
+        'vta_pedido_venta_cab.*',
+        DB::raw("date_format(vta_pedido_venta_cab.fecha_creacion, '%d/%c/%Y %H:%i:%s') as fecha_crea"),
+        'cme_usuario.nombre',
+        'cme_usuario.apellido_paterno',
+        'vta_mesa.vta_numero_mesa'
+      )
+        ->join('cme_usuario', 'id_cme_usuario', '=', 'id_usuario')
+        ->join('vta_mesa', 'id_vta_mesa', '=', 'vta_mesa_id_vta_mesa')
+        ->orderBy('vta_pedido_venta_cab.fecha_edicion', 'desc')
+        ->where('estado', '=', 'A')
+        ->get();
+
+      return CustomResponse::success('Pedidos Atendidos', $data);
+    } catch (\Throwable $th) {
+      error_log($th);
+      return CustomResponse::failure();
+    }
+  }
+
+  function generatePaymentFormOrder(Request  $request) {
+    $codLocal = '001';
+    $codPaymentForm = $request->input('codFormaPago');
+    $numOrder = $request->input('numPedido');
+    $imPayment = $request->input('imPago');
+    $coinType = $request->input('tipMoneda');
+    $valTypChange = $request->input('valTipoCambio');
+    $valVuelto = $request->input('valVuelto');
+    $imTotalPago = $request->input('imTotalPago');
+
+    $validator = Validator::make($request->all(), [
+      'codFormaPago' => 'required',
+      'numPedido' => 'required',
+      'imPago' => 'required',
+      'tipMoneda' => 'required',
+      'valTipoCambio' => 'required',
+      'valVuelto' => 'required',
+      'imTotalPago' => 'required',
+    ]);
+
+    if ($validator->fails()) {
+      return CustomResponse::failure('Datos faltantes');
+    }
+
+    try {
+      DB::table('vta_forma_pago_pedido')
+        ->insert([
+          'cod_local' => $codLocal,
+          'cod_forma_pago' => $codPaymentForm,
+          'num_ped_vta' => $numOrder,
+          'im_pago' => $imPayment,
+          'tip_moneda' => $coinType,
+          'val_tip_cambio' => $valTypChange,
+          'val_vuelto' => $valVuelto,
+          'im_total_pago' => $imTotalPago,
+        ]);
+
+      return CustomResponse::success('Forma pago pedido generado correctamente');
     } catch (\Throwable $th) {
       error_log($th);
       return CustomResponse::failure();

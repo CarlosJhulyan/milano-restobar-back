@@ -28,6 +28,9 @@ Route::post('/pedido/generarPedido', 'App\http\Controllers\OrderController@gener
 Route::post('/pedido/getPedidosUsuario', 'App\http\Controllers\OrderController@getRecentOrdersByUser');
 Route::patch('/pedido/updateEstadoPedido', 'App\http\Controllers\OrderController@changeStatusOrder');
 Route::post('/pedido/getPedidosDetalles', 'App\http\Controllers\OrderController@getOrderDetailsByHeader');
+Route::post('/pedido/getPedidosDetallesComp', 'App\http\Controllers\OrderController@getOrderDetailsComplete');
+Route::get('/pedido/getPedidosAtendidos', 'App\http\Controllers\OrderController@getOrdersFulfilled');
+Route::post('/pedido/generarFormaPagoPedido', 'App\http\Controllers\OrderController@generatePaymentFormOrder');
 
 // Recipe
 Route::post('/receta/createReceta', 'App\http\Controllers\RecipeController@createRecipe');
@@ -50,3 +53,6 @@ Route::post('/carta/getCartasPorRestaurante', 'App\http\Controllers\MenuControll
 // Restaurant
 Route::get('/restaurante/getRestaurantes', 'App\http\Controllers\RestaurantController@getRestaurants');
 Route::post('/restaurante/getMesasPorRestaurante', 'App\http\Controllers\RestaurantController@getTablesByRestaurant');
+
+
+Route::get('/getFormaPago', 'App\http\Controllers\Controller@getCoinType');

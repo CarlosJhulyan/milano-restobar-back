@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MenuHasPlate;
 use App\Models\Plate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -43,7 +44,6 @@ class PlateController extends Controller
         'vta_desc_plato' => $description,
         'vta_ruta_imagen_plato' => $nameImage,
         'vta_precio' => $price,
-        'id_vta_carta' => $codMenu,
         'vta_dificultad_id_vta_dificultad' => $codDifficulty,
         'vta_categoria_id_vta_categoria' => $codCategoty,
         'id_cme_receta' => $codRecipe
@@ -51,6 +51,10 @@ class PlateController extends Controller
 
       if ($plate) {
         $image->move(public_path('plates/'), $nameImage);
+        MenuHasPlate::create([
+          'vta_carta_id_vta_carta' => $codMenu,
+          'vta_plato_id_vta_plato' => $plate['id_vta_plato']
+        ]);
       }
 
       return CustomResponse::success('Platillo creado');
@@ -72,7 +76,6 @@ class PlateController extends Controller
           'vta_ruta_imagen_plato',
           'vta_precio',
           'vta_peso_dificultad',
-          'id_vta_carta',
           'id_cme_receta'
         )
         ->join('vta_categoria', 'id_vta_categoria', '=', 'vta_categoria_id_vta_categoria')
@@ -99,17 +102,19 @@ class PlateController extends Controller
           'vta_ruta_imagen_plato',
           'vta_precio',
           'vta_peso_dificultad',
-          'id_vta_carta',
-          'id_cme_receta'
+          'id_cme_receta',
+          'vta_carta_id_vta_carta as id_vta_carta'
         )
         ->join('vta_categoria', 'id_vta_categoria', '=', 'vta_categoria_id_vta_categoria')
         ->join('vta_dificultad', 'id_vta_dificultad', '=', 'vta_dificultad_id_vta_dificultad')
+        ->join('vta_carta_has_vta_plato', 'vta_plato_id_vta_plato', '=', 'id_vta_plato')
         ->orderByDesc('id_vta_plato')
-        ->where('id_vta_carta', '=', $codMenu)
+        ->where('vta_carta_id_vta_carta', '=', $codMenu)
         ->get();
 
       return CustomResponse::success('Listado de platos', $data);
     } catch (\Throwable $th) {
+      error_log($th);
       return CustomResponse::failure();
     }
   }

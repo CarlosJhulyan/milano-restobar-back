@@ -15,7 +15,6 @@ class Plate extends Model
       'vta_desc_plato',
       'vta_ruta_imagen_plato',
       'vta_precio',
-      'id_vta_carta',
       'vta_dificultad_id_vta_dificultad',
       'vta_categoria_id_vta_categoria',
       'id_cme_receta'

@@ -11,7 +11,7 @@ class OrderDetail extends Model
   public const CREATED_AT = 'fecha_creacion';
   public const UPDATED_AT = 'fecha_edicion';
   protected $fillable = [
-    'id_vta_plato',
+    'vta_plato_id_vta_plato',
     'precio',
     'cantidad',
     'id_cme_receta',
