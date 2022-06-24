@@ -12,9 +12,20 @@ use Illuminate\Support\Facades\Validator;
 
 class RecipeController extends Controller
 {
+  function getRecetas()
+  {
+    try {
+      $data = Recipe::all();
+      return CustomResponse::success('Lista de recetas', $data);
+    } catch (\Throwable $th) {
+      log($th->getMessage());
+      return CustomResponse::failure();
+    }
+  }
+
   function createRecipe(Request $request) {
     $description = $request->input('descripcion');
-    $ingredients = $request->input('ingredientes');
+    // $ingredients = $request->input('ingredientes');
 
     $validator = Validator::make($request->all(), [
       'descripcion' => 'required',
@@ -29,15 +40,15 @@ class RecipeController extends Controller
         'descripcion' => $description
       ]);
 
-      if ($recipe) {
-        foreach ($ingredients as $value) {
-          RecipeHasIngredient::create([
-            'cme_receta_id_cme_receta' => $recipe->id_cme_receta,
-            'lgt_ingrediente_id_cme_ingrediente' => $value['id_cme_ingrediente'],
-            'cantidad' => $value['cantidad']
-          ]);
-        }
-      }
+      // if ($recipe) {
+      //   foreach ($ingredients as $value) {
+      //     RecipeHasIngredient::create([
+      //       'cme_receta_id_cme_receta' => $recipe->id_cme_receta,
+      //       'lgt_ingrediente_id_cme_ingrediente' => $value['id_cme_ingrediente'],
+      //       'cantidad' => $value['cantidad']
+      //     ]);
+      //   }
+      // }
 
       return CustomResponse::success('Receta creada');
     } catch (\Throwable $th) {
@@ -45,6 +56,21 @@ class RecipeController extends Controller
       return CustomResponse::failure();
     }
   }
+
+  function deleteRecetas(Request $request)
+  {
+    $id = $request->input('id_cme_receta');
+
+    try {
+      $data = Recipe::where('id_cme_receta', $id)->delete();
+
+      return CustomResponse::success('Restaurante eliminado', $data);
+    } catch (\Throwable $th) {
+      error_log($th);
+      return CustomResponse::failure();
+    }
+  }
+
 
   function getPlateRecipe(Request $request) {
     $codRecipe = $request->input('codReceta');

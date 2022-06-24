@@ -34,7 +34,9 @@ Route::get('/pedido/getPedidosAtendidos', 'App\http\Controllers\OrderController@
 Route::post('/pedido/generarFormaPagoPedido', 'App\http\Controllers\OrderController@generatePaymentFormOrder');
 
 // Recipe
+Route::get('/receta/getRecetas', 'App\http\Controllers\RecipeController@getRecetas');
 Route::post('/receta/createReceta', 'App\http\Controllers\RecipeController@createRecipe');
+Route::post('/receta/deleteRecetas', 'App\http\Controllers\RecipeController@deleteRecetas');
 Route::post('/receta/getRecetaPlato', 'App\http\Controllers\RecipeController@getPlateRecipe');
 
 // Category
