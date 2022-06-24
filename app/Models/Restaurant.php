@@ -10,9 +10,10 @@ class Restaurant extends Model
   protected $primaryKey = 'id_lgt_restaurante';
   public $timestamps = false;
   protected $fillable = [
-    'lgt_nombre_restaurante',
-    'lgt_direccion',
-    'lgt_ruc_razon_restaurante',
+    'lgt_nombre_resturante',
+    'lg_ruc_resturante',
+    'lgt_razon_restaurante',
+    'lgt_direccion_restaurante',
     'lgt_horario_apertura',
     'lgt_horario_cierre'
   ];

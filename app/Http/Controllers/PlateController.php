@@ -18,7 +18,7 @@ class PlateController extends Controller
     $name = $request->input('nombre');
     $codCategoty = $request->input('codCategoria');
     $codRecipe = $request->input('codReceta');
-    $codMenu = $request->input('codCarta');
+    // $codMenu = $request->input('codCarta');
     $codDifficulty = $request->input('codDificultad');
 
     $validator = Validator::make($request->all(), [
@@ -27,7 +27,7 @@ class PlateController extends Controller
       'nombre' => 'required',
       'codCategoria' => 'required',
       'codReceta' => 'required',
-      'codCarta' => 'required',
+      // 'codCarta' => 'required',
       'codDificultad' => 'required',
       'description' => 'required'
     ]);
@@ -37,7 +37,11 @@ class PlateController extends Controller
     }
 
     try {
-      $nameImage = uniqid('IMG', false) . '.' .  $image->extension();
+      if ($image) {
+        $nameImage = uniqid('IMG', false) . '.' .  $image->extension();
+      } else {
+        $nameImage = null;
+      }
 
       $plate = Plate::create([
         'vta_nombre_plato' => $name,
@@ -49,20 +53,101 @@ class PlateController extends Controller
         'id_cme_receta' => $codRecipe
       ]);
 
-      if ($plate) {
-        $image->move(public_path('plates/'), $nameImage);
-        MenuHasPlate::create([
-          'vta_carta_id_vta_carta' => $codMenu,
-          'vta_plato_id_vta_plato' => $plate['id_vta_plato']
-        ]);
+      if ($image) {
+        if ($plate) {
+          $image->move(public_path('plates/'), $nameImage);
+        }
       }
-
       return CustomResponse::success('Platillo creado');
     } catch (\Throwable $th) {
       error_log($th->getMessage());
       return CustomResponse::failure();
     }
   }
+
+
+  function UpdatePlate(Request $request) {
+
+    $id = $request->input('id');
+    $image = $request->file('imagen');
+    $description = $request->input('descripcion');
+    $price = $request->input('precio');
+    $name = $request->input('nombre');
+    $codCategoty = $request->input('codCategoria');
+    $codRecipe = $request->input('codReceta');
+    // $codMenu = $request->input('codCarta');
+    $codDifficulty = $request->input('codDificultad');
+
+    $validator = Validator::make($request->all(), [
+
+      'id' => 'required',
+      'imagen' => 'required',
+      'precio' => 'required',
+      'nombre' => 'required',
+      'codCategoria' => 'required',
+      'codReceta' => 'required',
+      // 'codCarta' => 'required',
+      'codDificultad' => 'required',
+      'description' => 'required'
+    ]);
+
+    if ($validator->fails()) {
+      CustomResponse::failure('Datos faltantes');
+    }
+
+    try {
+
+      // echo($id);
+      if ($image) {
+        $nameImage = uniqid('IMG', false) . '.' .  $image->extension();
+      } else {
+        $nameImage = null;
+      }
+
+      $plato = Plate::where('id_vta_plato', $id)->first();
+
+
+      if ($plato) {
+        if ($nameImage !== null) {
+          $plato->update([
+            'vta_nombre_plato' => $name,
+            'vta_desc_plato' => $description,
+            'vta_ruta_imagen_plato' => $nameImage,
+            'vta_precio' => $price,
+            'vta_dificultad_id_vta_dificultad' => $codDifficulty,
+            'vta_categoria_id_vta_categoria' => $codCategoty,
+            'id_cme_receta' => $codRecipe
+
+          ]);
+          // $plato->sabe();
+
+        }else{
+          $plato->update([
+            'vta_nombre_plato' => $name,
+            'vta_desc_plato' => $description,
+            // 'vta_ruta_imagen_plato' => $nameImage,
+            'vta_precio' => $price,
+            'vta_dificultad_id_vta_dificultad' => $codDifficulty,
+            'vta_categoria_id_vta_categoria' => $codCategoty,
+            'id_cme_receta' => $codRecipe
+          ]);
+          // $plato->sabe();
+        }
+      }
+      
+
+      if ($image) {
+        if ($plato) {
+          $image->move(public_path('plates/'), $nameImage);
+        }
+      }
+      return CustomResponse::success('Platillo actualizado',$plato);
+    } catch (\Throwable $th) {
+      error_log($th->getMessage());
+      return CustomResponse::failure();
+    }
+  }
+
 
   function getPlates() {
     try {
@@ -97,7 +182,7 @@ class PlateController extends Controller
           'id_vta_plato',
           'vta_nombre_plato',
           'vta_desc_plato',
-          'descripcion_categoria as vta_categoria_plato',
+          'vta_categoria_id_vta_categoria',
           'vta_descripcion as vta_dificultad_plato',
           'vta_ruta_imagen_plato',
           'vta_precio',

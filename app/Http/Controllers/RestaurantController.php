@@ -6,10 +6,12 @@ use App\Core\CustomResponse;
 use App\Models\Restaurant;
 use App\Models\Table;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class RestaurantController extends Controller
 {
-  function getRestaurants() {
+  function getRestaurants()
+  {
     try {
       $data = Restaurant::all();
       return CustomResponse::success('Lista de restaurantes', $data);
@@ -18,7 +20,61 @@ class RestaurantController extends Controller
       return CustomResponse::failure();
     }
   }
-  function getTablesByRestaurant(Request $request) {
+
+  function createRestaurants(Request $request)
+  {
+    $lgt_nombre_resturante = $request->input('lgt_nombre_resturante');
+    $lg_ruc_resturante = $request->input('lg_ruc_resturante');
+    $lgt_razon_restaurante = $request->input('lgt_razon_restaurante');
+    $lgt_direccion_restaurante = $request->input('lgt_direccion_restaurante');
+    $lgt_horario_apertura = $request->input('lgt_horario_apertura');
+    $lgt_horario_cierre = $request->input('lgt_horario_cierre');
+
+    $validator = Validator::make($request->all(), [
+      'lgt_nombre_resturante' => 'required',
+      'lg_ruc_resturante' => 'required',
+      'lgt_razon_restaurante' => 'required',
+      'lgt_direccion_restaurante' => 'required',
+      'lgt_horario_apertura' => 'required',
+      'lgt_horario_cierre' => 'required'
+    ]);
+
+    if ($validator->fails()) {
+      return CustomResponse::failure('Datos faltantes');
+    }
+
+    try {
+
+      $model = Restaurant::create([
+        'lgt_nombre_resturante' => $lgt_nombre_resturante,
+        'lg_ruc_resturante' => $lg_ruc_resturante,
+        'lgt_razon_restaurante' => $lgt_razon_restaurante,
+        'lgt_direccion_restaurante' => $lgt_direccion_restaurante,
+        'lgt_horario_apertura' => $lgt_horario_apertura,
+        'lgt_horario_cierre' => $lgt_horario_cierre
+      ]);
+
+      return CustomResponse::success('Restaurante creado');
+    } catch (\Throwable $th) {
+      error_log($th);
+      return CustomResponse::failure();
+    }
+  }
+
+  function deleteRestaurants($idrestaurant)
+  {
+    try {
+      $data = Restaurant::where('id_lgt_restaurante', $idrestaurant)->delete();
+
+      return CustomResponse::success('Restaurante eliminado', $data);
+    } catch (\Throwable $th) {
+      error_log($th);
+      return CustomResponse::failure();
+    }
+  }
+
+  function getTablesByRestaurant(Request $request)
+  {
     $codRestaurant = $request->input('codRestaurante');
 
     try {

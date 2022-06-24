@@ -14,12 +14,13 @@ Route::post('/admin/login', 'App\http\Controllers\AuthController@loginAdmin');
 
 // User
 Route::post('/usuario/createUsuario', 'App\http\Controllers\UserController@createUser');
-Route::put('/usuario/updateUsuario', 'App\http\Controllers\UserController@updateUser');
+Route::post('/usuario/updateUsuario', 'App\http\Controllers\UserController@updateUser');
 Route::get('/usuario/getUsuarios', 'App\http\Controllers\UserController@getUsers');
 Route::patch('/usuario/updateRolUsuario', 'App\http\Controllers\UserController@updateRolUser');
 Route::delete('/usuario/deleteUsuario/{idusuario}', 'App\http\Controllers\UserController@deleteUser');
 // Plate
 Route::post('/plato/createPlato', 'App\http\Controllers\PlateController@createPlate');
+Route::post('/plato/updatePlato', 'App\http\Controllers\PlateController@UpdatePlate');
 Route::get('/plato/getPlatos', 'App\http\Controllers\PlateController@getPlates');
 Route::post('/plato/getPlatosCarta', 'App\http\Controllers\PlateController@getPlatesByCodMenu');
 
@@ -38,9 +39,11 @@ Route::post('/receta/getRecetaPlato', 'App\http\Controllers\RecipeController@get
 
 // Category
 Route::post('/categoria/createCategoria', 'App\http\Controllers\CategoryController@createCategory');
+Route::get('/categoria/getCategoria', 'App\http\Controllers\CategoryController@getCategory');
 
 // Ingredient
 Route::post('/ingrediente/createIngrediente', 'App\http\Controllers\IngredientController@createIngredient');
+Route::post('/ingrediente/updateIngrediente', 'App\http\Controllers\IngredientController@updateIngredient');
 Route::get('/ingrediente/getIngredientes', 'App\http\Controllers\IngredientController@getIngredients');
 
 // Menu
@@ -51,8 +54,9 @@ Route::post('/carta/getCartasPorRestaurante', 'App\http\Controllers\MenuControll
 
 
 // Restaurant
+Route::post('/restaurante/createRestaurantes', 'App\http\Controllers\RestaurantController@createRestaurants');
 Route::get('/restaurante/getRestaurantes', 'App\http\Controllers\RestaurantController@getRestaurants');
 Route::post('/restaurante/getMesasPorRestaurante', 'App\http\Controllers\RestaurantController@getTablesByRestaurant');
-
+Route::delete('/restaurante/deleteRestaurantes/{idrestaurant}', 'App\http\Controllers\RestaurantController@deleteRestaurants');
 
 Route::get('/getFormaPago', 'App\http\Controllers\Controller@getCoinType');

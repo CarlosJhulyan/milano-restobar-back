@@ -42,4 +42,16 @@ class CategoryController extends Controller
       return CustomResponse::failure();
     }
   }
+  function getCategory(Request $request) {
+    $codMenu = $request->input('codCarta');
+
+    try {
+      $data = Category::all();
+       
+      return CustomResponse::success('Listado de platos', $data);
+    } catch (\Throwable $th) {
+      error_log($th);
+      return CustomResponse::failure();
+    }
+  }
 }

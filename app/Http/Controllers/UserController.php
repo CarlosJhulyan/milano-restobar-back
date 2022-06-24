@@ -66,7 +66,6 @@ class UserController extends Controller
       return CustomResponse::failure();
     }
   }
-
   function updateUser(Request $request)
   {
     $id_cme_usuario = $request->input('idusuario');
@@ -81,17 +80,17 @@ class UserController extends Controller
     $avatar = $request->file('avatar');
 
     $validator = Validator::make($request->all(), [
-      // 'idusuario' => 'required',
-      // 'nombre' => 'required',
-      // 'apellidop' => 'required',
-      // 'apellidom' => 'required',
-      // 'correo' => 'required',
-      // 'celular' => 'required',
-      // 'fechaNac' => 'required'
+      'idusuario' => 'required',
+      'nombre' => 'required',
+      'apellidop' => 'required',
+      'apellidom' => 'required',
+      'correo' => 'required',
+      'celular' => 'required',
+      'fechaNac' => 'required'
     ]);
 
     if ($validator->fails()) {
-      return CustomResponse::failure('Datos faltantes');
+      return  CustomResponse::failure('Datos faltantes');
     }
 
     try {
