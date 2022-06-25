@@ -32,6 +32,7 @@ Route::post('/pedido/getPedidosDetalles', 'App\http\Controllers\OrderController@
 Route::post('/pedido/getPedidosDetallesComp', 'App\http\Controllers\OrderController@getOrderDetailsComplete');
 Route::get('/pedido/getPedidosAtendidos', 'App\http\Controllers\OrderController@getOrdersFulfilled');
 Route::post('/pedido/generarFormaPagoPedido', 'App\http\Controllers\OrderController@generatePaymentFormOrder');
+Route::get('/pedido/getPedidosCancelados', 'App\http\Controllers\OrderController@getOrdersCanceled');
 
 // Recipe
 Route::get('/receta/getRecetas', 'App\http\Controllers\RecipeController@getRecetas');
@@ -42,6 +43,7 @@ Route::post('/receta/getRecetaPlato', 'App\http\Controllers\RecipeController@get
 // Category
 Route::post('/categoria/createCategoria', 'App\http\Controllers\CategoryController@createCategory');
 Route::get('/categoria/getCategoria', 'App\http\Controllers\CategoryController@getCategory');
+Route::get('/categoria/getListaCategorias', 'App\http\Controllers\CategoryController@getCategories');
 
 // Ingredient
 Route::post('/ingrediente/createIngrediente', 'App\http\Controllers\IngredientController@createIngredient');
@@ -60,5 +62,7 @@ Route::post('/restaurante/createRestaurantes', 'App\http\Controllers\RestaurantC
 Route::get('/restaurante/getRestaurantes', 'App\http\Controllers\RestaurantController@getRestaurants');
 Route::post('/restaurante/getMesasPorRestaurante', 'App\http\Controllers\RestaurantController@getTablesByRestaurant');
 Route::delete('/restaurante/deleteRestaurantes/{idrestaurant}', 'App\http\Controllers\RestaurantController@deleteRestaurants');
+Route::post('/mesa/createMesa', 'App\http\Controllers\RestaurantController@createTable');
+Route::delete('/mesa/deleteMesa/{idmesa}', 'App\http\Controllers\RestaurantController@deleteMesa');
 
 Route::get('/getFormaPago', 'App\http\Controllers\Controller@getCoinType');

@@ -171,6 +171,7 @@ class OrderController extends Controller
   }
 
   function getOrdersFulfilled(Request $request) {
+    $date = new \DateTime();
     try {
       $data = OrderHeader::select(
         'vta_pedido_venta_cab.*',
@@ -183,9 +184,32 @@ class OrderController extends Controller
         ->join('vta_mesa', 'id_vta_mesa', '=', 'vta_mesa_id_vta_mesa')
         ->orderBy('vta_pedido_venta_cab.fecha_edicion', 'desc')
         ->where('estado', '=', 'A')
+//        ->whereBetween('vta_pedido_venta_cab.fecha_creacion', [$date->format('Y-m-d H:m:s'), $date->modify('+1 day')->format('Y-m-d H:m:s')])
         ->get();
 
       return CustomResponse::success('Pedidos Atendidos', $data);
+    } catch (\Throwable $th) {
+      error_log($th);
+      return CustomResponse::failure();
+    }
+  }
+
+  function getOrdersCanceled(Request $request) {
+    try {
+      $data = OrderHeader::select(
+        'vta_pedido_venta_cab.*',
+        DB::raw("date_format(vta_pedido_venta_cab.fecha_creacion, '%d/%c/%Y %H:%i:%s') as fecha_crea"),
+        'cme_usuario.nombre',
+        'cme_usuario.apellido_paterno',
+        'vta_mesa.vta_numero_mesa'
+      )
+        ->join('cme_usuario', 'id_cme_usuario', '=', 'id_usuario')
+        ->join('vta_mesa', 'id_vta_mesa', '=', 'vta_mesa_id_vta_mesa')
+        ->orderBy('vta_pedido_venta_cab.fecha_edicion', 'desc')
+        ->where('estado', '=', 'C')
+        ->get();
+
+      return CustomResponse::success('Pedidos Cancelados', $data);
     } catch (\Throwable $th) {
       error_log($th);
       return CustomResponse::failure();

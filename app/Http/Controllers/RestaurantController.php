@@ -78,12 +78,41 @@ class RestaurantController extends Controller
     $codRestaurant = $request->input('codRestaurante');
 
     try {
-      $data = Table::all()
-        ->where('lgt_restaurante_id_lgt_restaurante', '=', $codRestaurant);
+      $data = Table::select('*')
+        ->join('lgt_restaurante', 'id_lgt_restaurante', '=', 'lgt_restaurante_id_lgt_restaurante')
+        ->where('lgt_restaurante_id_lgt_restaurante', '=', $codRestaurant)
+        ->get();
       return CustomResponse::success('Lista de mesas por restaurante', $data);
     } catch (\Throwable $th) {
-      log($th->getMessage());
+      error_log($th->getMessage());
       return CustomResponse::failure();
+    }
+  }
+
+  function createTable(Request $request) {
+    $codRestaurant = $request->input('codRestaurante');
+    $numMesa = $request->input('numMesa');
+
+    try {
+      Table::create([
+        'vta_numero_mesa' => $numMesa,
+        'lgt_restaurante_id_lgt_restaurante' => $codRestaurant
+      ]);
+      return CustomResponse::success('Mesa creada correctamente');
+    } catch (\Throwable $th) {
+      error_log($th->getMessage());
+      return CustomResponse::failure();
+    }
+  }
+
+  function deleteMesa($idmesa)
+  {
+    try {
+      Table::where('id_vta_mesa', $idmesa)->delete();
+      return CustomResponse::success('Mesa eliminada');
+    } catch (\Throwable $th) {
+      error_log($th);
+      return CustomResponse::failure('No se puede eliminar esta mesa');
     }
   }
 }
